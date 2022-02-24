@@ -15,9 +15,9 @@ const EMPTY_MSG string = ""
 func ConversionHandler(responseWriter http.ResponseWriter, request *http.Request) {
 	switch request.Method {
 	case http.MethodGet:
-		var convertedValue, conversionError = convert(request)
-		if conversionError.Arg != 0 {
-			generateErrorResponse(responseWriter, conversionError)
+		var convertedValue, requestError = convert(request)
+		if requestError.Arg != 0 {
+			generateErrorResponse(responseWriter, requestError)
 		} else {
 			fmt.Println("Conversion Value: ", convertedValue)
 		}
@@ -26,27 +26,27 @@ func ConversionHandler(responseWriter http.ResponseWriter, request *http.Request
 	}
 }
 
-func convert(request *http.Request) (float64, models.ConversionRequestError) {
-	conversionError := models.ConversionRequestError{Msg: EMPTY_MSG}
-	from, to, value := getParamsFromRequest(request, &conversionError)
+func convert(request *http.Request) (float64, models.RequestError) {
+	requestError := models.RequestError{Msg: EMPTY_MSG}
+	from, to, value := getParamsFromRequest(request, &requestError)
 	var conversionRequestData models.ConversionRequestModel = models.BuildConversionRequestModelFrom(from, to, value)
-	return services.ConvertFromTo(conversionRequestData), conversionError
+	return services.ConvertFromTo(conversionRequestData), requestError
 }
 
-func getParamsFromRequest(request *http.Request, conversionError *models.ConversionRequestError) (string, string, float64) {
+func getParamsFromRequest(request *http.Request, requestError *models.RequestError) (string, string, float64) {
 	var expectedParams []string = getConversionRequestExpectedParams()
 
-	var from, to, valueAsString = tryReadingParams(expectedParams, request, conversionError)
-	if conversionError.Arg != 0 {
+	var from, to, valueAsString = tryReadingParams(expectedParams, request, requestError)
+	if requestError.Arg != 0 {
 		return invalidGetRequestReturn()
 	}
 	fmt.Println("From: ", from, " To: ", to, " Value: ", valueAsString)
-	var value = tryConvertValueFromString(valueAsString, conversionError)
+	var value = tryConvertValueFromString(valueAsString, requestError)
 	return from, to, value
 }
 
-func tryConvertValueFromString(valueAsString string, conversionError *models.ConversionRequestError) float64 {
-	defer invalidOperation(INVALID_VALUE_PARAM, conversionError)
+func tryConvertValueFromString(valueAsString string, requestError *models.RequestError) float64 {
+	defer invalidOperation(INVALID_VALUE_PARAM, requestError)
 	return convertValueFromString(valueAsString)
 }
 
@@ -58,8 +58,8 @@ func convertValueFromString(valueAsString string) float64 {
 	return value
 }
 
-func tryReadingParams(expectedParams []string, request *http.Request, conversionError *models.ConversionRequestError) (string, string, string) {
-	defer invalidOperation(MISSING_PARAM, conversionError)
+func tryReadingParams(expectedParams []string, request *http.Request, requestError *models.RequestError) (string, string, string) {
+	defer invalidOperation(MISSING_PARAM, requestError)
 	var from, to, valueAsString = getRequestValues(expectedParams, request)
 	return from, to, valueAsString
 }
@@ -71,13 +71,13 @@ func getRequestValues(expectedParams []string, request *http.Request) (string, s
 	return from, to, valueAsString
 }
 
-func invalidOperation(msg string, err *models.ConversionRequestError) {
+func invalidOperation(msg string, err *models.RequestError) {
 	if recover := recover(); recover != nil {
-		*err = models.BuildConversionRequestErrorFrom(400, msg)
+		*err = models.BuildRequestErrorFrom(400, msg)
 	}
 }
 
-func generateErrorResponse(responseWriter http.ResponseWriter, err models.ConversionRequestError) {
+func generateErrorResponse(responseWriter http.ResponseWriter, err models.RequestError) {
 	http.Error(responseWriter, err.Msg, err.Arg)
 	fmt.Println(err.Msg)
 }
