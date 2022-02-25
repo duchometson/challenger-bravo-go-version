@@ -1,4 +1,4 @@
-package controller
+package errorsbravo
 
 import (
 	"bravo/model"

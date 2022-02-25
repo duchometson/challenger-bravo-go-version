@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"bravo/errorsbravo"
 	"bravo/model"
 	models "bravo/model"
 	"bravo/service"
@@ -27,20 +28,20 @@ func CurrencyHandler(responseWriter http.ResponseWriter, request *http.Request) 
 }
 
 func getCurrencyFromRequest(request *http.Request) (float64, model.RequestError) {
-	requestError := models.RequestError{Msg: EMPTY_MSG}
+	requestError := models.RequestError{Msg: errorsbravo.EMPTY_MSG}
 	currencyName := tryReadingParamsCurrency(request, &requestError)
 	currencyValue := tryGettingCurrencyValue(currencyName, &requestError)
 	return currencyValue, requestError
 }
 
 func tryGettingCurrencyValue(currencyName string, requestError *models.RequestError) float64 {
-	defer InvalidOperation(CURRENCY_DOESNT_EXISTS, requestError)
+	defer errorsbravo.InvalidOperation(errorsbravo.CURRENCY_DOESNT_EXISTS, requestError)
 	currencyValue := service.GetCurrencyValue(currencyName)
 	return currencyValue
 }
 
 func tryReadingParamsCurrency(request *http.Request, requestError *model.RequestError) string {
 	var expectedParams = getCurrencyGetRequestExpectedParams()
-	defer InvalidOperation(MISSING_PARAM, requestError)
+	defer errorsbravo.InvalidOperation(errorsbravo.MISSING_PARAM, requestError)
 	return getRequestParams(expectedParams[0], request)
 }

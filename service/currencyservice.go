@@ -5,13 +5,6 @@ import (
 )
 
 func GetCurrencyValue(currencyName string) float64 {
-	currencyValue, ok := dao.GetCoinValue(currencyName)
-	validateCurrencyExistance(ok)
+	currencyValue := dao.GetCoinValue(currencyName)
 	return currencyValue
-}
-
-func validateCurrencyExistance(ok bool) {
-	if !ok {
-		panic(ok)
-	}
 }

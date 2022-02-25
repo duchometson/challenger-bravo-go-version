@@ -1,8 +1,9 @@
 package controller
 
 import (
+	"bravo/errorsbravo"
 	models "bravo/model"
-	services "bravo/service"
+	"bravo/service"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -23,10 +24,10 @@ func ConversionHandler(responseWriter http.ResponseWriter, request *http.Request
 }
 
 func convert(request *http.Request) (float64, models.RequestError) {
-	requestError := models.RequestError{Msg: EMPTY_MSG}
+	requestError := models.RequestError{Msg: errorsbravo.EMPTY_MSG}
 	from, to, value := getParamsFromRequest(request, &requestError)
 	var conversionRequestData models.ConversionRequestModel = models.BuildConversionRequestModelFrom(from, to, value)
-	return services.ConvertFromTo(conversionRequestData), requestError
+	return service.ConvertFromTo(conversionRequestData, &requestError), requestError
 }
 
 func getParamsFromRequest(request *http.Request, requestError *models.RequestError) (string, string, float64) {
@@ -42,7 +43,7 @@ func getParamsFromRequest(request *http.Request, requestError *models.RequestErr
 }
 
 func tryConvertValueFromString(valueAsString string, requestError *models.RequestError) float64 {
-	defer InvalidOperation(INVALID_VALUE_PARAM, requestError)
+	defer errorsbravo.InvalidOperation(errorsbravo.INVALID_VALUE_PARAM, requestError)
 	return convertValueFromString(valueAsString)
 }
 
@@ -55,7 +56,7 @@ func convertValueFromString(valueAsString string) float64 {
 }
 
 func tryReadingParams(expectedParams []string, request *http.Request, requestError *models.RequestError) (string, string, string) {
-	defer InvalidOperation(MISSING_PARAM, requestError)
+	defer errorsbravo.InvalidOperation(errorsbravo.MISSING_PARAM, requestError)
 	var from, to, valueAsString = getRequestValues(expectedParams, request)
 	return from, to, valueAsString
 }
