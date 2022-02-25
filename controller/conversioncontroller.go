@@ -8,10 +8,6 @@ import (
 	"strconv"
 )
 
-const MISSING_PARAM string = "Faltam parametros"
-const INVALID_VALUE_PARAM string = "Parametro value invalido"
-const EMPTY_MSG string = ""
-
 func ConversionHandler(responseWriter http.ResponseWriter, request *http.Request) {
 	switch request.Method {
 	case http.MethodGet:
@@ -46,7 +42,7 @@ func getParamsFromRequest(request *http.Request, requestError *models.RequestErr
 }
 
 func tryConvertValueFromString(valueAsString string, requestError *models.RequestError) float64 {
-	defer invalidOperation(INVALID_VALUE_PARAM, requestError)
+	defer InvalidOperation(INVALID_VALUE_PARAM, requestError)
 	return convertValueFromString(valueAsString)
 }
 
@@ -59,7 +55,7 @@ func convertValueFromString(valueAsString string) float64 {
 }
 
 func tryReadingParams(expectedParams []string, request *http.Request, requestError *models.RequestError) (string, string, string) {
-	defer invalidOperation(MISSING_PARAM, requestError)
+	defer InvalidOperation(MISSING_PARAM, requestError)
 	var from, to, valueAsString = getRequestValues(expectedParams, request)
 	return from, to, valueAsString
 }
@@ -69,12 +65,6 @@ func getRequestValues(expectedParams []string, request *http.Request) (string, s
 	var to string = getRequestParams(expectedParams[1], request)
 	var valueAsString string = getRequestParams(expectedParams[2], request)
 	return from, to, valueAsString
-}
-
-func invalidOperation(msg string, err *models.RequestError) {
-	if recover := recover(); recover != nil {
-		*err = models.BuildRequestErrorFrom(400, msg)
-	}
 }
 
 func generateErrorResponse(responseWriter http.ResponseWriter, err models.RequestError) {
