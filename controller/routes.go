@@ -8,6 +8,7 @@ import (
 
 func InitializeServerRoutes() {
 	http.HandleFunc("/conversion", ConversionHandler)
+	http.HandleFunc("/currency", CurrencyHandler)
 
 	fmt.Printf("Starting server at port 8080\n")
 	if err := http.ListenAndServe(":8080", nil); err != nil {

@@ -67,11 +67,6 @@ func getRequestValues(expectedParams []string, request *http.Request) (string, s
 	return from, to, valueAsString
 }
 
-func generateErrorResponse(responseWriter http.ResponseWriter, err models.RequestError) {
-	http.Error(responseWriter, err.Msg, err.Arg)
-	fmt.Println(err.Msg)
-}
-
 func invalidGetRequestReturn() (string, string, float64) {
 	return "", "", 0.0
 }

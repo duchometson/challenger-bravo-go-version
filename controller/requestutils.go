@@ -1,6 +1,8 @@
 package controller
 
 import (
+	models "bravo/model"
+	"fmt"
 	"net/http"
 )
 
@@ -9,7 +11,7 @@ func getConversionRequestExpectedParams() []string {
 }
 
 func getCurrencyGetRequestExpectedParams() []string {
-	return []string{"currency"}
+	return []string{"name"}
 }
 
 func getRequestParams(param string, request *http.Request) string {
@@ -20,4 +22,9 @@ func getRequestParams(param string, request *http.Request) string {
 
 	key := keys[0]
 	return key
+}
+
+func generateErrorResponse(responseWriter http.ResponseWriter, err models.RequestError) {
+	http.Error(responseWriter, err.Msg, err.Arg)
+	fmt.Println(err.Msg)
 }
