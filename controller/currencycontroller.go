@@ -29,11 +29,11 @@ func CurrencyHandler(responseWriter http.ResponseWriter, request *http.Request) 
 func getCurrencyFromRequest(request *http.Request) (float64, model.RequestError) {
 	requestError := models.RequestError{Msg: EMPTY_MSG}
 	currencyName := tryReadingParamsCurrency(request, &requestError)
-	currencyValue := tryGettingCurrencyValue(requestError, currencyName)
+	currencyValue := tryGettingCurrencyValue(currencyName, requestError)
 	return currencyValue, requestError
 }
 
-func tryGettingCurrencyValue(requestError models.RequestError, currencyName string) float64 {
+func tryGettingCurrencyValue(currencyName string, requestError models.RequestError) float64 {
 	defer InvalidOperation(CURRENCY_DOESNT_EXISTS, &requestError)
 	currencyValue := service.GetCurrencyValue(currencyName)
 	return currencyValue
