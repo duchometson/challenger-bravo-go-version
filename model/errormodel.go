@@ -1,13 +1,19 @@
 package model
 
-type RequestError struct {
-	Arg int
+import "fmt"
+
+type ApplicationError struct {
+	Err error
 	Msg string
 }
 
-func BuildRequestErrorFrom(arg int, msg string) RequestError {
-	return RequestError{
-		Arg: arg,
+func NewApplicationError(err error, msg string) *ApplicationError {
+	return &ApplicationError{
+		Err: err,
 		Msg: msg,
 	}
+}
+
+func (a *ApplicationError) Error() string {
+	return fmt.Sprintf("%s - %s", a.Err, a.Msg)
 }

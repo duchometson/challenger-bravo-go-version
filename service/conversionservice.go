@@ -1,14 +1,29 @@
 package service
 
-import (
-	"bravo/dao"
-	"bravo/errorsbravo"
-	models "bravo/model"
-)
+import "bravo/model"
 
-func ConvertFromTo(conversionParams models.ConversionRequestModel, requestError *models.RequestError) float64 {
-	defer errorsbravo.InvalidOperation(errorsbravo.CURRENCY_DOESNT_EXISTS, requestError)
-	var fromValue, toValue = dao.GetCoinValues(conversionParams.From, conversionParams.To)
-	var coefficientOfConversion float64 = fromValue / toValue
-	return coefficientOfConversion * conversionParams.Value
+type Converter struct {
+	database Database
+}
+
+func (c *Converter) Convert(from string, to string, value float64) (float64, error) {
+	fromValue, err := c.database.Get(from)
+	if err != nil {
+		return 0, model.NewApplicationError(err, from)
+	}
+
+	toValue, err := c.database.Get(to)
+	if err != nil {
+		return 0, model.NewApplicationError(err, to)
+	}
+
+	coefficientOfConversion := fromValue / toValue
+
+	return coefficientOfConversion * value, nil
+}
+
+func NewConverter(database Database) *Converter {
+	return &Converter{
+		database: database,
+	}
 }
