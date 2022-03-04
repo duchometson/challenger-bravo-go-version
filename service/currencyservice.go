@@ -1,7 +1,6 @@
 package service
 
 import (
-	"bravo/dao"
 	"bravo/model"
 )
 
@@ -17,9 +16,16 @@ func (cM *CurrencyManager) Get(currency string) (float64, error) {
 	return currencyValue, nil
 }
 
-func GetCurrencyValue(currencyName string) float64 {
-	currencyValue := dao.GetCoinValue(currencyName)
-	return currencyValue
+func (cM *CurrencyManager) Insert(currency string, value float64) {
+	cM.database.Insert(currency, value)
+}
+
+func (cM *CurrencyManager) Delete(currency string) error {
+	err := cM.database.Delete(currency)
+	if err != nil {
+		return model.NewApplicationError(err, currency)
+	}
+	return nil
 }
 
 func NewCurrencyManager(database Database) *CurrencyManager {

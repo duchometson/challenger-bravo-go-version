@@ -18,5 +18,7 @@ func InitializeServerRoutes() {
 
 	r.GET("/convert", currencyController.ConversionHandler)
 	r.GET("/currency", currencyController.CurrencyGetHandler)
+	r.POST("/currency", currencyController.CurrencyPostHandler)
+
 	r.Run(":5656")
 }
