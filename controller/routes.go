@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"bravo/controller/currency"
+	currency "bravo/controller/currency"
 	"bravo/dao"
 	"bravo/service"
 
@@ -13,8 +13,10 @@ func InitializeServerRoutes() {
 
 	database := dao.NewMockedCoins()
 	converter := service.NewConverter(database)
-	currencyController := currency.New(converter)
+	currencyManager := service.NewCurrencyManager(database)
+	currencyController := currency.New(converter, currencyManager)
 
 	r.GET("/convert", currencyController.ConversionHandler)
+	r.GET("/currency", currencyController.CurrencyGetHandler)
 	r.Run(":5656")
 }

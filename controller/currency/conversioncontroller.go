@@ -9,10 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Currency struct {
-	converter Converter
-}
-
 func (c *Currency) ConversionHandler(ctx *gin.Context) {
 	from := ctx.Query("from")
 	if from == "" {
@@ -53,10 +49,4 @@ func (c *Currency) ConversionHandler(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, result)
-}
-
-func New(converter Converter) *Currency {
-	return &Currency{
-		converter: converter,
-	}
 }
