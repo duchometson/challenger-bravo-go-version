@@ -52,7 +52,7 @@ func (c *Currency) CurrencyPostHandler(ctx *gin.Context) {
 		return
 	}
 
-	c.currencyManager.Insert(name, parsedValue)
+	c.currencyManager.InsertOrUpdate(name, parsedValue)
 
 	if err != nil {
 		err, ok := err.(*models.ApplicationError)
@@ -61,6 +61,7 @@ func (c *Currency) CurrencyPostHandler(ctx *gin.Context) {
 				ctx.JSON(http.StatusNotFound, err.Error())
 				return
 			}
+
 		}
 
 		ctx.JSON(http.StatusInternalServerError, errorsbravo.INTERNAL_ERROR.Error())

@@ -17,7 +17,15 @@ func (m *MockedCoins) Get(currency string) (float64, error) {
 	return value, nil
 }
 
-func (m *MockedCoins) Insert(currency string, value float64) {
+func (m *MockedCoins) GetAllCurrencies() []string {
+	keys := []string{}
+	for k := range MOCKED_COINS_DB {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
+func (m *MockedCoins) InsertOrUpdate(currency string, value float64) {
 	MOCKED_COINS_DB[currency] = value
 }
 

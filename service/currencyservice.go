@@ -16,8 +16,8 @@ func (cM *CurrencyManager) Get(currency string) (float64, error) {
 	return currencyValue, nil
 }
 
-func (cM *CurrencyManager) Insert(currency string, value float64) {
-	cM.database.Insert(currency, value)
+func (cM *CurrencyManager) InsertOrUpdate(currency string, value float64) {
+	cM.database.InsertOrUpdate(currency, value)
 }
 
 func (cM *CurrencyManager) Delete(currency string) error {

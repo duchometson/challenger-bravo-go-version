@@ -2,16 +2,13 @@ package controller
 
 import (
 	currency "bravo/controller/currency"
-	"bravo/dao"
 	"bravo/service"
 
 	"github.com/gin-gonic/gin"
 )
 
-func InitializeServerRoutes() {
+func InitializeServerRoutes(database service.Database) {
 	r := gin.Default()
-
-	database := dao.NewMockedCoins()
 	converter := service.NewConverter(database)
 	currencyManager := service.NewCurrencyManager(database)
 	currencyController := currency.New(converter, currencyManager)
