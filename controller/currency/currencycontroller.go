@@ -26,7 +26,7 @@ func (c *Currency) CurrencyGetHandler(ctx *gin.Context) {
 			}
 		}
 
-		ctx.JSON(http.StatusInternalServerError, errorsbravo.CURRENCY_DOESNT_EXISTS.Error())
+		ctx.JSON(http.StatusInternalServerError, errorsbravo.INTERNAL_ERROR.Error())
 		return
 	}
 
@@ -63,7 +63,7 @@ func (c *Currency) CurrencyPostHandler(ctx *gin.Context) {
 			}
 		}
 
-		ctx.JSON(http.StatusInternalServerError, errorsbravo.CURRENCY_DOESNT_EXISTS.Error())
+		ctx.JSON(http.StatusInternalServerError, errorsbravo.INTERNAL_ERROR.Error())
 		return
 	}
 
@@ -88,7 +88,7 @@ func (c *Currency) CurrencyDeleteHandler(ctx *gin.Context) {
 			}
 		}
 
-		ctx.JSON(http.StatusInternalServerError, errorsbravo.CURRENCY_DOESNT_EXISTS.Error())
+		ctx.JSON(http.StatusInternalServerError, errorsbravo.INTERNAL_ERROR.Error())
 		return
 	}
 
