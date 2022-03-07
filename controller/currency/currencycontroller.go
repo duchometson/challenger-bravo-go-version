@@ -67,7 +67,7 @@ func (c *Currency) CurrencyPostHandler(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, value)
+	ctx.JSON(http.StatusOK, nil)
 }
 
 func (c *Currency) CurrencyDeleteHandler(ctx *gin.Context) {
