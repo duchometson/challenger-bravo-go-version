@@ -1,37 +1,36 @@
 package task
 
 import (
+	"bravo/config"
 	"bravo/service"
 	"fmt"
-	"strings"
 	"time"
 
 	exchange "github.com/asvvvad/exchange"
 )
 
 type CurrencyUpdater struct {
-	database    service.Database
-	finishTasks chan bool
+	database service.Database
+	config   config.Config
 }
 
 var mainServerCurrency string
 var amount int
+var avaiableCoins []string
 
 func (c *CurrencyUpdater) updateCurrencyTask() {
-	fmt.Println("CurrencyUpdater - Started UpdateTask")
 	ticker := time.NewTicker(5 * time.Second)
-	mainServerCurrency = "USD"
+	mainServerCurrency = c.config.GetMainServerCurrency()
+	currenciesList := c.config.GetInitialCurrencies()
 	amount = 1
 	for {
 		<-ticker.C
-		currenciesList := c.database.GetAllCurrencies()
 		c.updateAllCurrencies(currenciesList)
 	}
 }
 
 func (c *CurrencyUpdater) updateAllCurrencies(currenciesList []string) {
 	for _, currency := range currenciesList {
-		strings.ReplaceAll(currency, " ", "")
 		currencyToUpdate := exchange.New(currency)
 		value, err := currencyToUpdate.ConvertTo(mainServerCurrency, amount)
 		if err == nil {
@@ -43,8 +42,9 @@ func (c *CurrencyUpdater) updateAllCurrencies(currenciesList []string) {
 	}
 }
 
-func NewCurrencyManager(database service.Database) *CurrencyUpdater {
+func NewCurrencyManager(database service.Database, config config.Config) *CurrencyUpdater {
 	return &CurrencyUpdater{
 		database: database,
+		config:   config,
 	}
 }
