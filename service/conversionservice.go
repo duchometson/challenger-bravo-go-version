@@ -1,9 +1,12 @@
 package service
 
-import "bravo/model"
+import (
+	"bravo/model"
+	"bravo/repository"
+)
 
 type Converter struct {
-	database Database
+	database repository.Database
 }
 
 func (c *Converter) Convert(from string, to string, value float64) (float64, error) {
@@ -22,7 +25,7 @@ func (c *Converter) Convert(from string, to string, value float64) (float64, err
 	return coefficientOfConversion * value, nil
 }
 
-func NewConverter(database Database) *Converter {
+func NewConverter(database repository.Database) *Converter {
 	return &Converter{
 		database: database,
 	}

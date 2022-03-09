@@ -2,7 +2,7 @@ package task
 
 import (
 	"bravo/config"
-	"bravo/service"
+	"bravo/repository"
 	"fmt"
 	"time"
 
@@ -10,7 +10,7 @@ import (
 )
 
 type CurrencyUpdater struct {
-	database service.Database
+	database repository.Database
 	config   config.Config
 }
 
@@ -42,7 +42,7 @@ func (c *CurrencyUpdater) updateAllCurrencies(currenciesList []string) {
 	}
 }
 
-func NewCurrencyManager(database service.Database, config config.Config) *CurrencyUpdater {
+func NewCurrencyManager(database repository.Database, config config.Config) *CurrencyUpdater {
 	return &CurrencyUpdater{
 		database: database,
 		config:   config,

@@ -2,12 +2,13 @@ package controller
 
 import (
 	currency "bravo/controller/currency"
+	"bravo/repository"
 	"bravo/service"
 
 	"github.com/gin-gonic/gin"
 )
 
-func InitializeServerRoutes(database service.Database) {
+func InitializeServerRoutes(database repository.Database) {
 	r := gin.Default()
 	converter := service.NewConverter(database)
 	currencyManager := service.NewCurrencyManager(database)

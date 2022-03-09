@@ -2,10 +2,11 @@ package service
 
 import (
 	"bravo/model"
+	"bravo/repository"
 )
 
 type CurrencyManager struct {
-	database Database
+	database repository.Database
 }
 
 func (cM *CurrencyManager) Get(currency string) (float64, error) {
@@ -28,7 +29,7 @@ func (cM *CurrencyManager) Delete(currency string) error {
 	return nil
 }
 
-func NewCurrencyManager(database Database) *CurrencyManager {
+func NewCurrencyManager(database repository.Database) *CurrencyManager {
 	return &CurrencyManager{
 		database: database,
 	}

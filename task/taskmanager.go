@@ -2,10 +2,10 @@ package task
 
 import (
 	"bravo/config"
-	"bravo/service"
+	"bravo/repository"
 )
 
-func RunTasks(database service.Database, config config.Config) {
+func RunTasks(database repository.Database, config config.Config) {
 	currencyUpdater := NewCurrencyManager(database, config)
 	currencyUpdater.updateCurrencyTask()
 }
