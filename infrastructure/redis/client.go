@@ -2,11 +2,15 @@ package redis
 
 import (
 	"bravo/errorsbravo"
+
+	"github.com/go-redis/redis"
 )
 
 var MOCKED_COINS_DB = map[string]float64{"BTC": 1230.123, "BRL": 0.2, "USD": 1}
 
-type Client struct{}
+type Client struct {
+	redisClient *redis.Client
+}
 
 // TO IMPLEMENT USING REDIS:
 //Get(string) (interface{}, error)
@@ -16,29 +20,44 @@ type Client struct{}
 
 // https://github.com/go-redis/redis
 
-func (m *Client) Get(currency string) (float64, error) {
-	value, ok := MOCKED_COINS_DB[currency]
-	if !ok {
+func (m *Client) Get(currency string) (interface{}, error) {
+	redisCmd := m.redisClient.Get(currency)
+	if redisCmd != nil {
 		return 0, errorsbravo.CURRENCY_DOESNT_EXISTS
 	}
 
-	return value, nil
+	return redisCmd.Val(), nil
 }
 
-func (m *Client) InsertOrUpdate(currency string, value float64) {
-	MOCKED_COINS_DB[currency] = value
+func (m *Client) GetAllKeys() ([]string, error) {
+	return []string{}, nil
+}
+
+func (m *Client) Set(currency string, value interface{}) error {
+	m.redisClient.Set("currency", value, 0)
+	return nil
 }
 
 func (m *Client) Delete(currency string) error {
-	_, ok := MOCKED_COINS_DB[currency]
-	if !ok {
+	redisCmd := m.redisClient.Del(currency)
+	if redisCmd != nil {
 		return errorsbravo.CURRENCY_DOESNT_EXISTS
 	}
 
-	delete(MOCKED_COINS_DB, currency)
+	return nil
+}
+
+func (m *Client) ErrorNotFound() error {
 	return nil
 }
 
 func New() *Client {
-	return &Client{}
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+	return &Client{
+		redisClient: rdb,
+	}
 }

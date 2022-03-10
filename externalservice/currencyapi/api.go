@@ -3,7 +3,7 @@ package currencyapi
 type CurrencyAPI struct {
 }
 
-func Get(currency string) (float64, error) {
+func (c *CurrencyAPI) Get(currency string) (float64, error) {
 	return 0, nil
 }
 

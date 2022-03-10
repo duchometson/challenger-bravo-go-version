@@ -13,7 +13,10 @@ func (w *Worker) Update() {
 	w.UpdateCurrencies(DefaultSupportedCurrencies)
 
 	for {
-		currencies := w.currencyService.GetAllKeys()
+		currencies, err := w.currencyService.GetAllKeys()
+		if err != nil {
+			break
+		}
 
 		w.UpdateCurrencies(currencies)
 

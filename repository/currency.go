@@ -25,6 +25,37 @@ func (c *Currency) Get(currency string) (float64, error) {
 	return parsedValue, nil
 }
 
+func (c *Currency) GetAllKeys() ([]string, error) {
+	allKeys, err := c.database.GetAllKeys()
+	if err != nil {
+		if err == c.database.ErrorNotFound() {
+			return []string{}, errorsbravo.CURRENCY_DOESNT_EXISTS
+		}
+
+		return []string{}, err
+	}
+	return allKeys, nil
+}
+
+func (c *Currency) Set(currency string, value float64) error {
+	err := c.database.Set(currency, value)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Currency) Delete(currency string) error {
+	err := c.database.Delete(currency)
+	if err != nil {
+		if err == c.database.ErrorNotFound() {
+			return errorsbravo.CURRENCY_DOESNT_EXISTS
+		}
+		return err
+	}
+	return nil
+}
+
 // IMPLEMENT DELETE AND SET
 
 //func (c *Currency) InsertOrUpdate(currency string, value float64) {
