@@ -13,8 +13,19 @@ func (c *Currency) GetAllKeys() ([]string, error) {
 }
 
 func (c *Currency) Convert(from, to string, amount float64) (float64, error) {
+	valueFrom, errFrom := c.repository.Get(from)
+	if errFrom != nil {
+		return 0, errFrom
+	}
 
-	return 0, nil
+	valueTo, errTo := c.repository.Get(to)
+	if errTo != nil {
+		return 0, errTo
+	}
+
+	convertedValue := (valueFrom / valueTo) * amount
+
+	return convertedValue, nil
 }
 
 func (c *Currency) Set(currency string, value float64) error {

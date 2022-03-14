@@ -40,7 +40,7 @@ func (c *Currency) GetAllKeys() ([]string, error) {
 func (c *Currency) Set(currency string, value float64) error {
 	err := c.database.Set(currency, value)
 	if err != nil {
-		return err
+		return errorsbravo.INTERNAL_ERROR
 	}
 	return nil
 }
@@ -56,21 +56,6 @@ func (c *Currency) Delete(currency string) error {
 	return nil
 }
 
-// IMPLEMENT DELETE AND SET
-
-//func (c *Currency) InsertOrUpdate(currency string, value float64) {
-//	MOCKED_COINS_DB[currency] = value
-//}
-//
-//func (c *Currency) Delete(currency string) error {
-//	_, ok := MOCKED_COINS_DB[currency]
-//	if !ok {
-//		return errorsbravo.CURRENCY_DOESNT_EXISTS
-//	}
-//
-//	delete(MOCKED_COINS_DB, currency)
-//	return nil
-//}
 
 func New(database Database) *Currency {
 	return &Currency{

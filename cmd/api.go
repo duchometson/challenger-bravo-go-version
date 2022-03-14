@@ -24,13 +24,13 @@ func main() {
 
 	go worker.Update()
 
-	currency.New(currencyService)
+	currency := currency.New(currencyService)
 
 	httpServer := httpserver.New(5656)
 
 	defer httpServer.Shutdown(context.Background())
 
-	if err := httpServer.ListenAndServe(); err != nil {
+	if err := httpServer.ListenAndServe(currency); err != nil {
 		log.Fatal(err)
 	}
 }
