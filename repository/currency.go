@@ -2,6 +2,7 @@ package repository
 
 import (
 	"bravo/errorsbravo"
+	"strconv"
 )
 
 var MOCKED_COINS_DB = map[string]float64{"BTC": 1230.123, "BRL": 0.2, "USD": 1}
@@ -20,7 +21,10 @@ func (c *Currency) Get(currency string) (float64, error) {
 		return 0, err
 	}
 
-	parsedValue := value.(float64)
+	parsedValue, err := strconv.ParseFloat(value.(string), 64)
+	if err != nil {
+		return 0, errorsbravo.INTERNAL_ERROR
+	}
 
 	return parsedValue, nil
 }
@@ -55,7 +59,6 @@ func (c *Currency) Delete(currency string) error {
 	}
 	return nil
 }
-
 
 func New(database Database) *Currency {
 	return &Currency{

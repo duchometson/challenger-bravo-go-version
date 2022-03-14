@@ -19,12 +19,11 @@ type Client struct {
 // https://github.com/go-redis/redis
 
 func (c *Client) Get(currency string) (interface{}, error) {
-	redisCmd := c.redisClient.Get(currency)
-	if redisCmd != nil {
+	value, err := c.redisClient.Get(currency).Result()
+	if err != nil {
 		return 0, c.ErrorNotFound()
 	}
-
-	return redisCmd.Val(), nil
+	return value, nil
 }
 
 func (c *Client) GetAllKeys() ([]string, error) {
@@ -38,7 +37,11 @@ func (c *Client) GetAllKeys() ([]string, error) {
 }
 
 func (c *Client) Set(currency string, value interface{}) error {
-	c.redisClient.Set(currency, value, 0)
+	err := c.redisClient.Set(currency, value, 0).Err()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -61,6 +64,7 @@ func New() *Client {
 		Password: "",
 		DB:       0,
 	})
+
 	return &Client{
 		redisClient: rdb,
 	}

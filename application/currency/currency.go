@@ -2,7 +2,6 @@ package currency
 
 import (
 	"bravo/errorsbravo"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -36,25 +35,23 @@ func (c *Currency) Add(ctx *gin.Context) {
 		return
 	}
 
-	amount, ok := ctx.GetQuery("amount")
+	value, ok := ctx.GetQuery("value")
 	if !ok {
 		ctx.JSON(http.StatusBadRequest, errorsbravo.MISSING_PARAM)
 		return
 	}
 
-	parsedAmount, err := strconv.ParseFloat(amount, 64)
+	parsedValue, err := strconv.ParseFloat(value, 64)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorsbravo.INVALID_VALUE_PARAM)
 		return
 	}
 
-	err = c.service.Set(name, parsedAmount)
+	err = c.service.Set(name, parsedValue)
 	if err != nil {
-		fmt.Println("não entendi po")
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	fmt.Println("entao foi?")
 
 	ctx.JSON(http.StatusOK, "currency set")
 	return
