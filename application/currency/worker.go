@@ -9,7 +9,7 @@ type Worker struct {
 	externalService ExternalService
 }
 
-var DefaultSupportedCurrencies = []string{"BTC", "HURB"}
+var DefaultSupportedCurrencies = []string{"BTC", "BRL", "ETH", "EUR", "USD"}
 
 func (w *Worker) Update() {
 	w.UpdateCurrencies(DefaultSupportedCurrencies)

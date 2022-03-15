@@ -5,8 +5,6 @@ import (
 	"strconv"
 )
 
-var MOCKED_COINS_DB = map[string]float64{"BTC": 1230.123, "BRL": 0.2, "USD": 1}
-
 type Currency struct {
 	database Database
 }

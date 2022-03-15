@@ -6,6 +6,9 @@ type CurrencyAPI struct {
 	repository Repository
 }
 
+const SERVER_CURRENCY string = "USD"
+const SINGLE_CONVERTION_AMOUNT int = 1
+
 func (c *CurrencyAPI) Get(currency string) (float64, error) {
 	err := exchange.ValidateCode(currency)
 	if err != nil {
@@ -13,7 +16,7 @@ func (c *CurrencyAPI) Get(currency string) (float64, error) {
 	}
 
 	currencyToUpdate := exchange.New(currency)
-	value, err := currencyToUpdate.ConvertTo("USD", 1)
+	value, err := currencyToUpdate.ConvertTo(SERVER_CURRENCY, SINGLE_CONVERTION_AMOUNT)
 	defer func() {
 		if recover() != nil {
 			err = exchange.ErrInvalidCode
