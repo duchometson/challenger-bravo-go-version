@@ -9,10 +9,11 @@ import (
 	"bravo/repository"
 	"context"
 	"log"
+	"time"
 )
 
 func main() {
-	database := redis.New()
+	database := redis.New("localhost:6379", "", 0)
 
 	repo := repository.New(database)
 
@@ -20,7 +21,7 @@ func main() {
 
 	currencyApi := currencyapi.New()
 
-	worker := currency.NewWorker(currencyService, currencyApi)
+	worker := currency.NewWorker(currencyService, currencyApi, 5*time.Minute, []string{"BTC", "BRL", "EUR", "USD"})
 
 	go worker.Update()
 

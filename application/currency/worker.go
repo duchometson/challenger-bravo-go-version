@@ -1,18 +1,19 @@
 package currency
 
 import (
+	log "github.com/sirupsen/logrus"
 	"time"
 )
 
 type Worker struct {
-	currencyService Service
-	externalService ExternalService
+	currencyService            Service
+	defaultSupportedCurrencies []string
+	externalService            ExternalService
+	interval                   time.Duration
 }
 
-var DefaultSupportedCurrencies = []string{"BTC", "BRL", "ETH", "EUR", "USD"}
-
 func (w *Worker) Update() {
-	w.UpdateCurrencies(DefaultSupportedCurrencies)
+	w.UpdateCurrencies(w.defaultSupportedCurrencies)
 
 	for {
 		currencies, err := w.currencyService.GetAllKeys()
@@ -22,20 +23,32 @@ func (w *Worker) Update() {
 
 		w.UpdateCurrencies(currencies)
 
-		time.Sleep(5 * time.Second)
+		time.Sleep(w.interval)
 	}
 }
 
 func (w *Worker) UpdateCurrencies(currencies []string) {
 	for _, currency := range currencies {
-		value, _ := w.externalService.Get(currency)
-		w.currencyService.Set(currency, value)
+		value, err := w.externalService.Get(currency)
+		if err != nil {
+			log.WithError(err).WithField("currency", currency).Error("failed to get currency")
+			continue
+		}
+
+		if err := w.currencyService.Set(currency, value); err != nil {
+			log.WithError(err).WithField("currency", currency).Error("failed to set currency")
+			continue
+		}
+
+		log.WithField("currency", currency).Info("currency updated successfully")
 	}
 }
 
-func NewWorker(currencyService Service, externalService ExternalService) *Worker {
+func NewWorker(currencyService Service, externalService ExternalService, interval time.Duration, defaultSupportedCurrencies []string) *Worker {
 	return &Worker{
-		currencyService: currencyService,
-		externalService: externalService,
+		currencyService:            currencyService,
+		defaultSupportedCurrencies: defaultSupportedCurrencies,
+		externalService:            externalService,
+		interval:                   interval,
 	}
 }

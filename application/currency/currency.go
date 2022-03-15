@@ -2,10 +2,10 @@ package currency
 
 import (
 	"bravo/errorsbravo"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
-
-	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 type Currency struct {
@@ -15,35 +15,39 @@ type Currency struct {
 func (c *Currency) Get(ctx *gin.Context) {
 	name, ok := ctx.GetQuery("name")
 	if !ok {
-		ctx.JSON(http.StatusBadRequest, errorsbravo.MISSING_PARAM)
+		ctx.JSON(http.StatusBadRequest, errorsbravo.MissingParam)
 		return
 	}
+
+	name = strings.ToUpper(name)
 
 	value, err := c.service.Get(name)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
+
 	ctx.JSON(http.StatusOK, value)
-	return
 }
 
 func (c *Currency) Add(ctx *gin.Context) {
 	name, ok := ctx.GetQuery("name")
 	if !ok {
-		ctx.JSON(http.StatusBadRequest, errorsbravo.MISSING_PARAM)
+		ctx.JSON(http.StatusBadRequest, errorsbravo.MissingParam)
 		return
 	}
 
+	name = strings.ToUpper(name)
+
 	value, ok := ctx.GetQuery("value")
 	if !ok {
-		ctx.JSON(http.StatusBadRequest, errorsbravo.MISSING_PARAM)
+		ctx.JSON(http.StatusBadRequest, errorsbravo.MissingParam)
 		return
 	}
 
 	parsedValue, err := strconv.ParseFloat(value, 64)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, errorsbravo.INVALID_VALUE_PARAM)
+		ctx.JSON(http.StatusBadRequest, errorsbravo.InvalidValueParam)
 		return
 	}
 
@@ -54,53 +58,57 @@ func (c *Currency) Add(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, "currency set")
-	return
 }
 
 func (c *Currency) Delete(ctx *gin.Context) {
 	name, ok := ctx.GetQuery("name")
 	if !ok {
-		ctx.JSON(http.StatusBadRequest, errorsbravo.MISSING_PARAM)
+		ctx.JSON(http.StatusBadRequest, errorsbravo.MissingParam)
 		return
 	}
+
+	name = strings.ToUpper(name)
 
 	err := c.service.Delete(name)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
+
 	ctx.JSON(http.StatusOK, "currency deleted")
-	return
 }
 
 func (c *Currency) Convert(ctx *gin.Context) {
 	from, ok := ctx.GetQuery("from")
 	if !ok {
-		ctx.JSON(http.StatusBadRequest, errorsbravo.MISSING_PARAM)
+		ctx.JSON(http.StatusBadRequest, errorsbravo.MissingParam)
 		return
 	}
 
 	to, ok := ctx.GetQuery("to")
 	if !ok {
-		ctx.JSON(http.StatusBadRequest, errorsbravo.MISSING_PARAM)
+		ctx.JSON(http.StatusBadRequest, errorsbravo.MissingParam)
 		return
 	}
 
 	amount, ok := ctx.GetQuery("amount")
 	if !ok {
-		ctx.JSON(http.StatusBadRequest, errorsbravo.MISSING_PARAM)
+		ctx.JSON(http.StatusBadRequest, errorsbravo.MissingParam.Error())
 		return
 	}
 
 	parsedAmount, err := strconv.ParseFloat(amount, 64)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, errorsbravo.INVALID_VALUE_PARAM)
+		ctx.JSON(http.StatusBadRequest, errorsbravo.InvalidValueParam)
 		return
 	}
 
 	convertedValue, err := c.service.Convert(from, to, parsedAmount)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 	ctx.JSON(http.StatusOK, convertedValue)
-	return
 }
 
 func New(service Service) *Currency {

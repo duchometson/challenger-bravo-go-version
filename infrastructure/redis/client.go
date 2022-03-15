@@ -1,7 +1,8 @@
 package redis
 
 import (
-	redis "github.com/go-redis/redis"
+	"context"
+	redis "github.com/go-redis/redis/v8"
 )
 
 var MOCKED_COINS_DB = map[string]float64{"BTC": 1230.123, "BRL": 0.2, "USD": 1}
@@ -10,8 +11,8 @@ type Client struct {
 	redisClient *redis.Client
 }
 
-func (c *Client) Get(currency string) (interface{}, error) {
-	value, err := c.redisClient.Get(currency).Result()
+func (c *Client) Get(ctx context.Context, currency string) (interface{}, error) {
+	value, err := c.redisClient.Get(ctx, currency).Result()
 	if err != nil {
 		return 0, c.ErrorNotFound()
 	}
@@ -27,8 +28,7 @@ func (c *Client) GetAllKeys() ([]string, error) {
 }
 
 func (c *Client) Set(currency string, value interface{}) error {
-	err := c.redisClient.Set(currency, value, 0).Err()
-	if err != nil {
+	if err := c.redisClient.Set(currency, value, 0).Err(); err != nil {
 		return err
 	}
 
@@ -48,11 +48,11 @@ func (c *Client) ErrorNotFound() error {
 	return redis.TxFailedErr
 }
 
-func New() *Client {
+func New(address, password string, db int) *Client {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
+		Addr:     address,
+		Password: password,
+		DB:       db,
 	})
 
 	return &Client{

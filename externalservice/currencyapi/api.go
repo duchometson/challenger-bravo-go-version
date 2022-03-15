@@ -3,11 +3,11 @@ package currencyapi
 import "github.com/asvvvad/exchange"
 
 type CurrencyAPI struct {
+	client     *exchange.Exchange
 	repository Repository
 }
 
-const SERVER_CURRENCY string = "USD"
-const SINGLE_CONVERTION_AMOUNT int = 1
+const BaseCurrency string = "USD"
 
 func (c *CurrencyAPI) Get(currency string) (float64, error) {
 	err := exchange.ValidateCode(currency)
@@ -15,21 +15,18 @@ func (c *CurrencyAPI) Get(currency string) (float64, error) {
 		return 0, err
 	}
 
-	currencyToUpdate := exchange.New(currency)
-	value, err := currencyToUpdate.ConvertTo(SERVER_CURRENCY, SINGLE_CONVERTION_AMOUNT)
-	defer func() {
-		if recover() != nil {
-			err = exchange.ErrInvalidCode
-		}
-		err = nil
-	}()
+	value, err := c.client.LatestRatesSingle(currency)
 	if err != nil {
-		return 0, exchange.ErrInvalidCode
+		return 0, err
 	}
+
 	valueAsFloat, _ := value.Float64()
+
 	return valueAsFloat, nil
 }
 
 func New() *CurrencyAPI {
-	return &CurrencyAPI{}
+	return &CurrencyAPI{
+		client: exchange.New(BaseCurrency),
+	}
 }
