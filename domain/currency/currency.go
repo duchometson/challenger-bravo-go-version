@@ -36,8 +36,6 @@ func (c *Currency) Delete(currency string) error {
 	return c.repository.Delete(currency)
 }
 
-// TO IMPLEMENT THE REMAINING METHODS
-
 func New(repository Repository) *Currency {
 	return &Currency{
 		repository: repository,

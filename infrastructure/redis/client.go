@@ -1,7 +1,7 @@
 package redis
 
 import (
-	"github.com/go-redis/redis"
+	redis "github.com/go-redis/redis"
 )
 
 var MOCKED_COINS_DB = map[string]float64{"BTC": 1230.123, "BRL": 0.2, "USD": 1}
@@ -9,14 +9,6 @@ var MOCKED_COINS_DB = map[string]float64{"BTC": 1230.123, "BRL": 0.2, "USD": 1}
 type Client struct {
 	redisClient *redis.Client
 }
-
-// TO IMPLEMENT USING REDIS:
-//Get(string) (interface{}, error)
-//Set(string, interface{}) error
-//Delete(string) error
-//ErrorNotFound() error
-
-// https://github.com/go-redis/redis
 
 func (c *Client) Get(currency string) (interface{}, error) {
 	value, err := c.redisClient.Get(currency).Result()
@@ -27,12 +19,10 @@ func (c *Client) Get(currency string) (interface{}, error) {
 }
 
 func (c *Client) GetAllKeys() ([]string, error) {
-	var cursor uint64
-	keys, cursor, err := c.redisClient.Scan(cursor, "prefix:*", 0).Result()
+	keys, err := c.redisClient.Keys("*").Result()
 	if err != nil {
-		return []string{}, c.ErrorNotFound()
+		return []string{}, nil
 	}
-
 	return keys, nil
 }
 

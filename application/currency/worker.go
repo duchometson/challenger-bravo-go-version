@@ -1,13 +1,15 @@
 package currency
 
-import "time"
+import (
+	"time"
+)
 
 type Worker struct {
 	currencyService Service
 	externalService ExternalService
 }
 
-var DefaultSupportedCurrencies = []string{""}
+var DefaultSupportedCurrencies = []string{"BTC", "HURB"}
 
 func (w *Worker) Update() {
 	w.UpdateCurrencies(DefaultSupportedCurrencies)
@@ -20,7 +22,7 @@ func (w *Worker) Update() {
 
 		w.UpdateCurrencies(currencies)
 
-		time.Sleep(5 * time.Minute)
+		time.Sleep(5 * time.Second)
 	}
 }
 
