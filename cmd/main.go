@@ -8,6 +8,7 @@ import (
 	"bravo/infrastructure/redis"
 	"bravo/repository"
 	"context"
+	_ "github.com/golang/mock/mockgen/model"
 	"log"
 	"time"
 )
