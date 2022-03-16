@@ -1,6 +1,6 @@
 package currency
 
-//go:generate go run -mod=mod github.com/golang/mock/mockgen -destination=./testutil/mock_service.go -package=testutil . Service
+//go:generate go run github.com/golang/mock/mockgen -destination=./testutil/mock_service.go -package=testutil . Service
 
 type Service interface {
 	Delete(string) error
@@ -10,7 +10,7 @@ type Service interface {
 	Convert(string, string, float64) (float64, error)
 }
 
-//go:generate go run -mod=mod github.com/golang/mock/mockgen -destination=./testutil/mock_external_service.go -package=testutil . ExternalService
+//go:generate go run github.com/golang/mock/mockgen -destination=./testutil/mock_external_service.go -package=testutil . ExternalService
 
 type ExternalService interface {
 	Get(string) (float64, error)
