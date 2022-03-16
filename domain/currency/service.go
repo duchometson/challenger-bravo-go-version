@@ -1,6 +1,6 @@
 package currency
 
-//go:generate mockgen -destination=./testutil/mock_service.go -package=testutil . Repository
+//go:generate go run -mod=mod github.com/golang/mock/mockgen -destination=./testutil/mock_service.go -package=testutil . Repository
 
 type Repository interface {
 	Get(string) (float64, error)
