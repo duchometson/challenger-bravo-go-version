@@ -2,6 +2,7 @@ package repository
 
 import (
 	"bravo/errorsbravo"
+	"context"
 	"strconv"
 )
 
@@ -10,7 +11,8 @@ type Currency struct {
 }
 
 func (c *Currency) Get(currency string) (float64, error) {
-	value, err := c.database.Get(currency)
+	ctx := context.TODO()
+	value, err := c.database.Get(ctx, currency)
 	if err != nil {
 		if err == c.database.ErrorNotFound() {
 			return 0, errorsbravo.CurrencyDoesntExists
@@ -28,7 +30,8 @@ func (c *Currency) Get(currency string) (float64, error) {
 }
 
 func (c *Currency) GetAllKeys() ([]string, error) {
-	allKeys, err := c.database.GetAllKeys()
+	ctx := context.TODO()
+	allKeys, err := c.database.GetAllKeys(ctx)
 	if err != nil {
 		if err == c.database.ErrorNotFound() {
 			return []string{}, errorsbravo.CurrencyDoesntExists
@@ -40,7 +43,8 @@ func (c *Currency) GetAllKeys() ([]string, error) {
 }
 
 func (c *Currency) Set(currency string, value float64) error {
-	err := c.database.Set(currency, value)
+	ctx := context.TODO()
+	err := c.database.Set(ctx, currency, value)
 	if err != nil {
 		return errorsbravo.InternalError
 	}
@@ -48,7 +52,8 @@ func (c *Currency) Set(currency string, value float64) error {
 }
 
 func (c *Currency) Delete(currency string) error {
-	err := c.database.Delete(currency)
+	ctx := context.TODO()
+	err := c.database.Delete(ctx, currency)
 	if err != nil {
 		if err == c.database.ErrorNotFound() {
 			return errorsbravo.CurrencyDoesntExists

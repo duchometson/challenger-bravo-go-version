@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+
 	redis "github.com/go-redis/redis/v8"
 )
 
@@ -19,24 +20,24 @@ func (c *Client) Get(ctx context.Context, currency string) (interface{}, error) 
 	return value, nil
 }
 
-func (c *Client) GetAllKeys() ([]string, error) {
-	keys, err := c.redisClient.Keys("*").Result()
+func (c *Client) GetAllKeys(ctx context.Context) ([]string, error) {
+	keys, err := c.redisClient.Keys(ctx, "*").Result()
 	if err != nil {
 		return []string{}, nil
 	}
 	return keys, nil
 }
 
-func (c *Client) Set(currency string, value interface{}) error {
-	if err := c.redisClient.Set(currency, value, 0).Err(); err != nil {
+func (c *Client) Set(ctx context.Context, currency string, value interface{}) error {
+	if err := c.redisClient.Set(ctx, currency, value, 0).Err(); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (c *Client) Delete(currency string) error {
-	_, err := c.redisClient.Del(currency).Result()
+func (c *Client) Delete(ctx context.Context, currency string) error {
+	_, err := c.redisClient.Del(ctx, currency).Result()
 	if err != nil {
 		return c.ErrorNotFound()
 	}
