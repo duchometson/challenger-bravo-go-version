@@ -1,16 +1,14 @@
 package currencyapi
 
-import "github.com/asvvvad/exchange"
-
 type CurrencyAPI struct {
-	client     *exchange.Exchange
+	client     ExternalApi
 	repository Repository
 }
 
 const BaseCurrency string = "USD"
 
 func (c *CurrencyAPI) Get(currency string) (float64, error) {
-	err := exchange.ValidateCode(currency)
+	err := c.client.ValidateCode(currency)
 	if err != nil {
 		return 0, err
 	}
@@ -25,8 +23,8 @@ func (c *CurrencyAPI) Get(currency string) (float64, error) {
 	return valueAsFloat, nil
 }
 
-func New() *CurrencyAPI {
+func New(externalApi ExternalApi) *CurrencyAPI {
 	return &CurrencyAPI{
-		client: exchange.New(BaseCurrency),
+		client: externalApi,
 	}
 }

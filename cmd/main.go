@@ -3,14 +3,16 @@ package main
 import (
 	"bravo/application/currency"
 	domainCurrency "bravo/domain/currency"
+	"bravo/externalservice/apilayer"
 	"bravo/externalservice/currencyapi"
 	"bravo/httpserver"
 	"bravo/infrastructure/redis"
 	"bravo/repository"
 	"context"
-	_ "github.com/golang/mock/mockgen/model"
 	"log"
 	"time"
+
+	_ "github.com/golang/mock/mockgen/model"
 )
 
 func main() {
@@ -20,7 +22,9 @@ func main() {
 
 	currencyService := domainCurrency.New(repo)
 
-	currencyApi := currencyapi.New()
+	currencyApiLayer := apilayer.New("USD")
+
+	currencyApi := currencyapi.New(currencyApiLayer)
 
 	worker := currency.NewWorker(currencyService, currencyApi, 5*time.Minute, []string{"BTC", "BRL", "EUR", "USD"})
 
