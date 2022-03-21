@@ -11,4 +11,5 @@ require (
 	github.com/onsi/gomega v1.18.1 // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.5.1
+	golang.org/x/tools v0.1.10 // indirect
 )

@@ -36,4 +36,15 @@ func TestCurrencyApi_ExternalApiGet(t *testing.T) {
 		assert.Equal(t, exchange.ErrInvalidCode, err)
 		assert.Equal(t, expectedValue, value)
 	})
+	t.Run("testing  get from external api when api returns invalid response", func(t *testing.T) {
+		expectedValueFromApi := big.NewFloat(0.0)
+		expectedReturn := float64(0)
+		first := mockedApi.EXPECT().ValidateCode("BRL").Return(nil)
+		mockedApi.EXPECT().LatestRatesSingle("BRL").Return(expectedValueFromApi, exchange.ErrInvalidAPIResponse).After(first)
+
+		value, err := currencyAPI.Get("BRL")
+		assert.NotNil(t, err)
+		assert.Equal(t, exchange.ErrInvalidAPIResponse, err)
+		assert.Equal(t, expectedReturn, value)
+	})
 }
