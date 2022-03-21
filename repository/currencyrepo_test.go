@@ -30,7 +30,7 @@ func TestCurrencyRepository_CurrencyGet(t *testing.T) {
 		assert.Equal(t, expectedReturn, value)
 	})
 
-	t.Run("testing get from repository when currency doesnt exists", func(t *testing.T) {
+	t.Run("testing get from repository when currency doesnt exists error is returned", func(t *testing.T) {
 		expectedReturn := float64(0.0)
 		ctx := context.TODO()
 		first := mockDatabase.EXPECT().Get(ctx, "BRL").Return(nil, redis.TxFailedErr)
@@ -82,7 +82,7 @@ func TestCurrencyRepository_CurrencyGetAllKeys(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, expectedDatabaseReturn, value)
 	})
-	t.Run("testing getall from repository when currency doesnt exists is returned", func(t *testing.T) {
+	t.Run("testing getall from repository when currency doesnt exists error is returned", func(t *testing.T) {
 		expectedDatabaseReturn := []string{}
 		ctx := context.TODO()
 
@@ -146,7 +146,7 @@ func TestCurrencyRepository_CurrencyDelete(t *testing.T) {
 		err := currency.Delete("BRL")
 		assert.Nil(t, err)
 	})
-	t.Run("testing delete from repository when currency doesnt exists is returned", func(t *testing.T) {
+	t.Run("testing delete from repository when currency doesnt exists error is returned", func(t *testing.T) {
 		ctx := context.TODO()
 
 		first := mockDatabase.EXPECT().Delete(ctx, "BRL").Return(redis.TxFailedErr)
